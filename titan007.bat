@@ -1,24 +1,48 @@
 
-@echo off
-setlocal
+@REM @echo off
+setlocal enabledelayedexpansion
 
-set "TITAN007CRAWLER-HOME=..\titan007Crawler-"
+rem This file is UTF-8 encoded, so we need to update the current code page while executing it
+for /f "tokens=2 delims=:." %%a in ('"%SystemRoot%\System32\chcp.com"') do (
+    set _OLD_CODEPAGE=%%a
+)
+if defined _OLD_CODEPAGE (
+    "%SystemRoot%\System32\chcp.com" 65001 > nul
+)
 
-set "VENV_PYTHON=%TITAN007CRAWLER-HOME%\.venv\Scripts\python.exe"
-set "VENV_PYTHON_MERGE=.venv\Scripts\python.exe"
+cd /d "%~dp0"
+set "MERGE_PROJECT_HOME=%~dp0"
+set "MERGE_VENV_PYTHON=%MERGE_PROJECT_HOME%\.venv\Scripts\python.exe"
 
+rem Use the sibling crawler project and its own virtual environment.
+for %%I in ("%MERGE_PROJECT_HOME%..") do set "PARENT_DIR=%%~fI"
+set "CRAWLER_PROJECT_HOME=%PARENT_DIR%\titan007Crawler-"
+set "CRAWLER_VENV_PYTHON=%CRAWLER_PROJECT_HOME%\.venv\Scripts\python.exe"
+set "CRAWLER_APP=%CRAWLER_PROJECT_HOME%\main.py"
 
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 3 --output titan007_data_Crow.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 8 --output titan007_data_36.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 14 --output titan007_data_Î°.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 17 --output titan007_data_Ã÷.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 24 --output titan007_data_12.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 31 --output titan007_data_Àû.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 35 --output titan007_data_Ó¯.xlsx
-"%VENV_PYTHON%" "%TITAN007CRAWLER-HOME%\main.py" --company-id 42 --output titan007_data_18.xlsx
+if not exist "%CRAWLER_VENV_PYTHON%" (
+    echo Error: missing crawler venv at %CRAWLER_VENV_PYTHON%
+    exit /b 1
+)
+if not exist "%CRAWLER_APP%" (
+    echo Error: missing crawler main.py at %CRAWLER_APP%
+    exit /b 1
+)
 
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 3 --output titan007_data_Crow.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 8 --output titan007_data_36.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 14 --output titan007_data_ä¼Ÿ.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 17 --output titan007_data_æ˜Ž.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 24 --output titan007_data_12.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 31 --output titan007_data_åˆ©.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 35 --output titan007_data_ç›ˆ.xlsx
+"%CRAWLER_VENV_PYTHON%" "%CRAWLER_APP%" --company-id 42 --output titan007_data_18.xlsx
 
+@REM "%MERGE_VENV_PYTHON%" "%MERGE_PROJECT_HOME%\main.py" --basedir "%MERGE_PROJECT_HOME%" 
+"%MERGE_VENV_PYTHON%" "%MERGE_PROJECT_HOME%\main.py"
 
-"%VENV_PYTHON_MERGE%" main.py
-
-endlocal
+:END
+if defined _OLD_CODEPAGE (
+    "%SystemRoot%\System32\chcp.com" %_OLD_CODEPAGE% > nul
+    set _OLD_CODEPAGE=
+)

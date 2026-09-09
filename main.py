@@ -76,6 +76,7 @@ if __name__ == "__main__":
         # file_path = Path(args.basedir + excel_file)
         file_path = Path(args.basedir) / excel_file  # Create a Path object for the Excel file
         if file_path.is_file():
+            print(f"Processing file: {file_path}")
             company_name = get_company_name_from_excel_filename(file_path)
             df = pd.read_excel(file_path)  # Read the Excel file (you can process it as needed)
             df = df.dropna(subset=['联赛']) # Drop rows with any NaN values
@@ -89,7 +90,6 @@ if __name__ == "__main__":
     mdf = mdf.drop(columns=["状态", "比赛球队-上", "比分", "比赛球队-下", 
                       "赔率变动", "盘口变动", "赔率变动-大", "盘口变动-大"])  
     mdf.sort_values(by=["比赛"], ascending=[False], inplace=True)  # Sort by company and date
-    # mdf = mdf[mdf['联赛'] in ["英超", "西甲", "德甲", "意甲", "法甲", "欧冠", "欧联"]]
     mdf = mdf[mdf['联赛'].isin(args.league)]  # Filter rows based on the specified leagues
 
     target_cols = SHIFT_COLS
@@ -100,5 +100,6 @@ if __name__ == "__main__":
     mdf.loc[mask, target_cols] = pd.NA
 
     mdf.to_excel(args.output, index=False) 
+    print(f"Combined data saved to {args.output}")
   
 
