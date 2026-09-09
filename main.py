@@ -73,7 +73,8 @@ if __name__ == "__main__":
 
     df_list = []
     for excel_file in args.excels:
-        file_path = Path(args.basedir + excel_file)
+        # file_path = Path(args.basedir + excel_file)
+        file_path = Path(args.basedir) / excel_file  # Create a Path object for the Excel file
         if file_path.is_file():
             company_name = get_company_name_from_excel_filename(file_path)
             df = pd.read_excel(file_path)  # Read the Excel file (you can process it as needed)

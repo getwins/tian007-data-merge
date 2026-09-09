@@ -1,3 +1,5 @@
 .venv/
+venv/
 .vscode/
 *.xlsx
+__pycache__/
